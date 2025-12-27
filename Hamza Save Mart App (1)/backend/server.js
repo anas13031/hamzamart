@@ -17,22 +17,18 @@ app.get('/api/products', async (req, res) => {
   res.json(await Product.find());
 });
 
-
 app.get('/api/products/:id', async (req, res) => {
   res.json(await Product.findById(req.params.id));
 });
-
 
 app.post('/api/products', async (req, res) => {
   res.json(await Product.create(req.body));
 });
 
-
 app.delete('/api/products/:id', async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: 'Product deleted' });
 });
-
 
 
 app.post('/api/orders', async (req, res) => {
@@ -43,12 +39,6 @@ app.post('/api/orders', async (req, res) => {
 app.get('/api/orders', async (req, res) => {
   res.json(await Order.find());
 });
-
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
 
 
 app.get('/api/seed-products', async (req, res) => {
@@ -91,9 +81,8 @@ app.get('/api/seed-products', async (req, res) => {
   res.json({ message: 'Dummy products inserted successfully' });
 });
 
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log('Server running on port ' + PORT);
 });
-
-
