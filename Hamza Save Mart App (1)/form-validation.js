@@ -1,63 +1,82 @@
-form.addEventListener('submit', async function (e) {
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('checkoutForm');
+  if (!form) return;
+
+  function clearError(id) {
+    const e = document.getElementById(id + 'Error');
+    if (e) e.textContent = '';
+  }
+
+  function showError(id, msg) {
+    const e = document.getElementById(id + 'Error');
+    if (e) e.textContent = msg;
+  }
+
+  function validate(id, condition, msg) {
+    if (!condition) {
+      showError(id, msg);
+      return false;
+    }
+    clearError(id);
+    return true;
+  }
+
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const isFullNameValid = validateFullName();
-    const isEmailValid = validateEmail();
-    const isPhoneValid = validatePhone();
-    const isAddressValid = validateAddress();
-    const isCityValid = validateCity();
-    const isZipCodeValid = validateZipCode();
-    const isPaymentMethodValid = validatePaymentMethod();
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zipCode = document.getElementById('zipCode').value.trim();
+    const paymentMethod = document.getElementById('paymentMethod').value;
 
-    if (isFullNameValid && isEmailValid && isPhoneValid && isAddressValid &&
-        isCityValid && isZipCodeValid && isPaymentMethodValid) {
+    const ok =
+      validate('fullName', fullName.length >= 3, 'Full name required') &&
+      validate('email', email.includes('@'), 'Valid email required') &&
+      validate('phone', phone.length >= 11, 'Valid phone required') &&
+      validate('address', address.length >= 10, 'Address required') &&
+      validate('city', city.length >= 2, 'City required') &&
+      validate('zipCode', zipCode.length === 5, 'ZIP must be 5 digits') &&
+      validate('paymentMethod', paymentMethod !== '', 'Select payment method');
 
-        
+    if (!ok) return;
 
-        const cartItems = JSON.parse(localStorage.getItem('hsm_cart')) || [];
+    const cart = JSON.parse(localStorage.getItem('hsm_cart')) || [];
+    const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
-        const totalAmount = cartItems.reduce(
-            (sum, item) => sum + (item.price * item.quantity), 0
-        );
+    const orderData = {
+      customerName: fullName,
+      email,
+      phone,
+      address,
+      city,
+      paymentMethod,
+      items: cart,
+      total
+    };
 
-        const orderData = {
-            customerName: document.getElementById('fullName').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            phone: document.getElementById('phone').value.trim(),
-            address: document.getElementById('address').value.trim(),
-            city: document.getElementById('city').value.trim(),
-            paymentMethod: document.getElementById('paymentMethod').value,
-            items: cartItems,
-            total: totalAmount
-        };
-
-        try {
-            const response = await fetch('http://localhost:5000/api/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            const result = await response.json();
-
-            
-            localStorage.removeItem('hsm_cart');
-
-            
-            window.location.href =
-                'order-confirmation.html?orderId=' + result.orderId;
-
-        } catch (error) {
-            alert('Order failed. Please try again.');
-            console.error(error);
+    try {
+      const response = await fetch(
+        location.hostname === 'localhost'
+          ? 'http://localhost:5000/api/orders'
+          : 'https://hamzamart-production.up.railway.app/api/orders',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
         }
+      );
 
-    } else {
-        const firstError = document.querySelector('.error');
-        if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+      const result = await response.json();
+      localStorage.removeItem('hsm_cart');
+      window.location.href =
+        'order-confirmation.html?orderId=' + result.orderId;
+
+    } catch (err) {
+      alert('Order failed. Please try again.');
+      console.error(err);
     }
+  });
 });
