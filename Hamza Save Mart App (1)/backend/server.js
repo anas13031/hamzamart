@@ -91,3 +91,9 @@ app.get('/api/seed-products', async (req, res) => {
   res.json({ message: 'Dummy products inserted successfully' });
 });
 
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log('Server running on port ' + PORT);
+});
+
+
