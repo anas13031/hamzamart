@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Hamza Save Mart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="header-top">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">🛒</span>
+                    <h1 class="logo-text">Hamza Save Mart</h1>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container main-content order-confirmation">
+            <div class="order-confirmation-card">
+                <div class="success-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+
+                <h1 class="order-confirmation-title">Order Placed Successfully!</h1>
+                <p class="order-confirmation-message">Thank you for shopping with Hamza Save Mart. Your order has been
+                    received and is being processed.</p>
+
+                <div class="order-id-box">
+                    <div class="order-id-label">Order ID</div>
+                    <div class="order-id-value" id="orderId">ORD-123456789</div>
+                </div>
+
+                <div class="order-info-box">
+                    <p class="order-info-text">You will receive a confirmation email shortly with order details and
+                        tracking information.</p>
+                </div>
+
+                <a href="index.html" class="btn-primary continue-shopping-btn">Continue Shopping</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-bottom">
+                <p>© 2025 Hamza Save Mart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Get Order ID from URL
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+
+            if (orderId) {
+                document.getElementById('orderId').textContent = orderId;
+            } else {
+                // Generate random ID if none provided (for demo)
+                const randomId = 'ORD-' + Math.floor(Math.random() * 1000000000);
+                document.getElementById('orderId').textContent = randomId;
+            }
+
+            // Clear cart
+            localStorage.removeItem('hsm_cart');
+        });
+    </script>
+</body>
+
+</html>
